@@ -59,7 +59,7 @@ spec:
         - name: config-volume
           mountPath: /etc/statsd
       - name: mixer
-        image: gcr.io/istio-testing/mixer:87cdc595-689d-4779-be29-ac845d47492e
+        image: gcr.io/istio-testing/mixer:3c19fd9e0a4138ef0e9266c5f718c0b80210ef33
         imagePullPolicy: Always
         ports:
         - containerPort: 9091
@@ -126,7 +126,7 @@ spec:
       serviceAccountName: istio-pilot-service-account
       containers:
       - name: discovery
-        image: gcr.io/istio-testing/pilot:5633d45a99138892a0ba0d380dff5c587583edd3
+        image: gcr.io/istio-testing/pilot:6f557f9051fe492407cfe8f148038c351f56e3fa
         imagePullPolicy: Always
         args: ["discovery", "-v", "2"]
         ports:
@@ -186,7 +186,7 @@ spec:
       serviceAccountName: istio-ingress-service-account
       containers:
       - name: istio-ingress
-        image: gcr.io/istio-testing/proxy_debug:5633d45a99138892a0ba0d380dff5c587583edd3
+        image: gcr.io/istio-testing/proxy_debug:6f557f9051fe492407cfe8f148038c351f56e3fa
         args: ["proxy", "ingress", "-v", "2"]
         imagePullPolicy: Always
         ports:
@@ -234,7 +234,7 @@ spec:
     spec:
       containers:
       - name: proxy
-        image: gcr.io/istio-testing/proxy_debug:5633d45a99138892a0ba0d380dff5c587583edd3
+        image: gcr.io/istio-testing/proxy_debug:6f557f9051fe492407cfe8f148038c351f56e3fa
         imagePullPolicy: Always
         args: ["proxy", "egress", "-v", "2"]
         env:
@@ -277,7 +277,7 @@ spec:
       serviceAccountName: istio-ca-service-account
       containers:
       - name: istio-ca
-        image: docker.io/istio/istio-ca:0.1.5
+        image: 90b8e7aae30692b2b55489a813f3b24614d4bfc4/istio-ca:docker.io/istio
         imagePullPolicy: IfNotPresent
         env:
         - name: NAMESPACE
