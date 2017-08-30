@@ -67,9 +67,26 @@ func DeleteNamespace(n string) error {
 	return err
 }
 
-// KubeApply kubectl apply
+// NamespaceDeleted check if a kubernete namespace is deleted
+func NamespaceDeleted(n string) (bool, error) {
+	output, err := Shell("kubectl get namespace %s", n)
+	if strings.Contains(output, "NotFound") {
+		glog.V(2).Infof("namespace %s deleted\n", n)
+		return true, nil
+	}
+	glog.V(2).Infof("namespace %s not deleted yet\n", n)
+	return false, err
+}
+
+// KubeApply kubectl apply from file
 func KubeApply(n, yaml string) error {
 	_, err := Shell("kubectl apply -n %s -f %s", n, yaml)
+	return err
+}
+
+// KubeDelete kubectl delete from file
+func KubeDelete(n, yaml string) error {
+	_, err := Shell("kubectl delete -n %s -f %s", n, yaml)
 	return err
 }
 
