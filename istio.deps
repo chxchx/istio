@@ -1,5 +1,6 @@
 [
 	{
+		"_comment": "some comments"
 		"name": "CA_TAG",
 		"repoName": "auth",
 		"prodBranch": "stable",
