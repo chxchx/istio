@@ -22,7 +22,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
+	// "regexp"
 	"strings"
 	"testing"
 	"time"
@@ -35,21 +35,23 @@ import (
 )
 
 const (
-	u1                       = "normal-user"
+	// u1                       = "normal-user"
 	u2                       = "test-user"
 	bookinfoYaml             = "samples/bookinfo/kube/bookinfo.yaml"
 	bookinfoRatingsv2Yaml    = "samples/bookinfo/kube/bookinfo-ratings-v2.yaml"
 	bookinfoRatingsMysqlYaml = "samples/bookinfo/kube/bookinfo-ratings-v2-mysql.yaml"
 	bookinfoDbYaml           = "samples/bookinfo/kube/bookinfo-db.yaml"
 	bookinfoMysqlYaml        = "samples/bookinfo/kube/bookinfo-mysql.yaml"
-	modelDir                 = "tests/apps/bookinfo/output"
-	rulesDir                 = "samples/bookinfo/kube"
-	allRule                  = "route-rule-all-v1.yaml"
-	delayRule                = "route-rule-ratings-test-delay.yaml"
-	fiftyRule                = "route-rule-reviews-50-v3.yaml"
-	testRule                 = "route-rule-reviews-test-v2.yaml"
-	testDbRule               = "route-rule-ratings-db.yaml"
-	testMysqlRule            = "route-rule-ratings-mysql.yaml"
+	// modelDir                 = "tests/apps/bookinfo/output"
+	rulesDir      = "samples/bookinfo/kube"
+	allRule       = "route-rule-all-v1.yaml"
+	delayRule     = "route-rule-ratings-test-delay.yaml"
+	fiftyRule     = "route-rule-reviews-50-v3.yaml"
+	testRule      = "route-rule-reviews-test-v2.yaml"
+	testDbRule    = "route-rule-ratings-db.yaml"
+	testMysqlRule = "route-rule-ratings-mysql.yaml"
+	httpSvcName   = "rawvm"
+	httpSvcPort   = "80"
 )
 
 var (
@@ -64,21 +66,21 @@ type testConfig struct {
 	rulesDir string
 }
 
-func getWithCookie(url string, cookies []http.Cookie) (*http.Response, error) {
-	// Declare http client
-	client := &http.Client{}
+// func getWithCookie(url string, cookies []http.Cookie) (*http.Response, error) {
+// 	// Declare http client
+// 	client := &http.Client{}
 
-	// Declare HTTP Method and Url
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	for _, c := range cookies {
-		// Set cookie
-		req.AddCookie(&c)
-	}
-	return client.Do(req)
-}
+// 	// Declare HTTP Method and Url
+// 	req, err := http.NewRequest(http.MethodGet, url, nil)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	for _, c := range cookies {
+// 		// Set cookie
+// 		req.AddCookie(&c)
+// 	}
+// 	return client.Do(req)
+// }
 
 func closeResponseBody(r *http.Response) {
 	if err := r.Body.Close(); err != nil {
@@ -168,77 +170,77 @@ func setUpDefaultRouting() error {
 	return nil
 }
 
-func checkRoutingResponse(user, version, gateway, modelFile string) (int, error) {
-	startT := time.Now()
-	cookies := []http.Cookie{
-		{
-			Name:  "foo",
-			Value: "bar",
-		},
-		{
-			Name:  "user",
-			Value: user,
-		},
-	}
-	resp, err := getWithCookie(fmt.Sprintf("%s/productpage", gateway), cookies)
-	if err != nil {
-		return -1, err
-	}
-	if resp.StatusCode != http.StatusOK {
-		return -1, fmt.Errorf("status code is %d", resp.StatusCode)
-	}
-	duration := int(time.Since(startT) / (time.Second / time.Nanosecond))
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return -1, err
-	}
+// func checkRoutingResponse(user, version, gateway, modelFile string) (int, error) {
+// 	startT := time.Now()
+// 	cookies := []http.Cookie{
+// 		{
+// 			Name:  "foo",
+// 			Value: "bar",
+// 		},
+// 		{
+// 			Name:  "user",
+// 			Value: user,
+// 		},
+// 	}
+// 	resp, err := getWithCookie(fmt.Sprintf("%s/productpage", gateway), cookies)
+// 	if err != nil {
+// 		return -1, err
+// 	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		return -1, fmt.Errorf("status code is %d", resp.StatusCode)
+// 	}
+// 	duration := int(time.Since(startT) / (time.Second / time.Nanosecond))
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return -1, err
+// 	}
 
-	if err = util.CompareToFile(body, modelFile); err != nil {
-		glog.Errorf("Error: User %s in version %s didn't get expected response", user, version)
-		duration = -1
-	}
-	closeResponseBody(resp)
-	return duration, err
-}
+// 	if err = util.CompareToFile(body, modelFile); err != nil {
+// 		glog.Errorf("Error: User %s in version %s didn't get expected response", user, version)
+// 		duration = -1
+// 	}
+// 	closeResponseBody(resp)
+// 	return duration, err
+// }
 
-func checkHTTPResponse(user, gateway, expr string, count int) (int, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/productpage", tc.gateway))
-	if err != nil {
-		return -1, err
-	}
+// func checkHTTPResponse(user, gateway, expr string, count int) (int, error) {
+// 	resp, err := http.Get(fmt.Sprintf("%s/productpage", tc.gateway))
+// 	if err != nil {
+// 		return -1, err
+// 	}
 
-	defer closeResponseBody(resp)
-	glog.Infof("Get from page: %d", resp.StatusCode)
-	if resp.StatusCode != http.StatusOK {
-		glog.Errorf("Get response from product page failed!")
-		return -1, fmt.Errorf("status code is %d", resp.StatusCode)
-	}
+// 	defer closeResponseBody(resp)
+// 	glog.Infof("Get from page: %d", resp.StatusCode)
+// 	if resp.StatusCode != http.StatusOK {
+// 		glog.Errorf("Get response from product page failed!")
+// 		return -1, fmt.Errorf("status code is %d", resp.StatusCode)
+// 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return -1, err
-	}
+// 	body, err := ioutil.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return -1, err
+// 	}
 
-	if expr == "" {
-		return 1, nil
-	}
+// 	if expr == "" {
+// 		return 1, nil
+// 	}
 
-	re, err := regexp.Compile(expr)
-	if err != nil {
-		return -1, err
-	}
+// 	re, err := regexp.Compile(expr)
+// 	if err != nil {
+// 		return -1, err
+// 	}
 
-	ref := re.FindAll(body, -1)
-	if ref == nil {
-		glog.Infof("%v", string(body))
-		return -1, fmt.Errorf("could not find %v in response", expr)
-	}
-	if count > 0 && len(ref) < count {
-		glog.Infof("%v", string(body))
-		return -1, fmt.Errorf("could not find %v # of %v in response. found %v", count, expr, len(ref))
-	}
-	return 1, nil
-}
+// 	ref := re.FindAll(body, -1)
+// 	if ref == nil {
+// 		glog.Infof("%v", string(body))
+// 		return -1, fmt.Errorf("could not find %v in response", expr)
+// 	}
+// 	if count > 0 && len(ref) < count {
+// 		glog.Infof("%v", string(body))
+// 		return -1, fmt.Errorf("could not find %v # of %v in response. found %v", count, expr, len(ref))
+// 	}
+// 	return 1, nil
+// }
 
 func deleteRules(ruleKeys []string) error {
 	var err error
@@ -266,6 +268,7 @@ func applyRules(ruleKeys []string) error {
 	return nil
 }
 
+/*
 func TestVersionRouting(t *testing.T) {
 	var err error
 	var rules = []string{testRule}
@@ -380,6 +383,7 @@ func TestVersionMigration(t *testing.T) {
 		}
 	}
 }
+*/
 
 func setTestConfig() error {
 	cc, err := framework.NewCommonConfig("demo_test")
@@ -414,6 +418,7 @@ func setTestConfig() error {
 	return nil
 }
 
+/*
 func TestDbRoutingMongo(t *testing.T) {
 	var err error
 	var rules = []string{testDbRule}
@@ -432,6 +437,7 @@ func TestDbRoutingMongo(t *testing.T) {
 		fmt.Sprintf("Success! Response matches with expected! %s", respExpr), t)
 }
 
+
 func TestDbRoutingMysql(t *testing.T) {
 	var err error
 	var rules = []string{testMysqlRule}
@@ -448,6 +454,22 @@ func TestDbRoutingMysql(t *testing.T) {
 	inspect(
 		err, fmt.Sprintf("Failed database routing! %s in v1", u1),
 		fmt.Sprintf("Success! Response matches with expected! %s", respExpr), t)
+}
+*/
+
+func TestVMSetUp(t *testing.T) {
+	vm := framework.NewGCPRawVM("istiotestrawvm", tc.CommonConfig.Kube.Namespace)
+	e := vm.Setup()
+	fmt.Printf("@@@@@@@@@@@@@@@@@@@@@@@@@@ %v\n", e)
+	err := vm.ConfigHTTPService(httpSvcName, httpSvcPort)
+	inspect(err, "Failed to set up http service on vm",
+		"Successfully set up http service on vm", t)
+	externalIP, err := vm.GetExternalIP()
+	inspect(err, "Failed to get external IP", "", t)
+	_, err = util.Shell(fmt.Sprintf("curl -f http://%s:9411/zipkin/", externalIP))
+	inspect(err, "VM unable to reach the cluster", "VM successfully reaches the cluster", t)
+	e = vm.Teardown()
+	fmt.Printf("@@@@@@@@@@@@@@@@@@@@@@@@@@ %v\n", e)
 }
 
 func TestMain(m *testing.M) {

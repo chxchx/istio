@@ -92,14 +92,15 @@ function concurrent_exec() {
 }
 
 function sequential_exec() {
-    for T in ${TESTS_TARGETS[@]}; do
+    # for T in ${TESTS_TARGETS[@]}; do
+        T="//tests/e2e/tests/bookinfo:go_default_test"
         echo '****************************************************'
         echo "Running ${T}"
         echo '****************************************************'
         bazel ${BAZEL_STARTUP_ARGS} run ${BAZEL_RUN_ARGS} ${T} -- ${ARGS[@]} ${TESTARGS[@]}
         process_result $? ${T}
         echo '****************************************************'
-    done
+    # done
 }
 
 # getopts only handles single character flags

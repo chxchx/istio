@@ -24,6 +24,7 @@ import (
 )
 
 var (
+	// pairWithVM  = flag.Bool("pair_with_vm", false, "Whether to test VM with cluster")
 	skipCleanup = flag.Bool("skip_cleanup", false, "Debug, skip clean up")
 )
 
@@ -164,7 +165,7 @@ func (t *testCleanup) cleanup() {
 }
 
 // Save test logs to tmp dir
-// Fetch and save cluster tracing logs if logProvider specified
+// Fetch and save cluster pod logs using kuebctl
 // Logs are uploaded during test tear down
 func (c *CommonConfig) saveLogs(r int) error {
 	if c.Cleanup.skipCleanup {

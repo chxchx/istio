@@ -1,0 +1,36 @@
+# The 'name: http' is critical. Without it the service is exposed as TCP
+kind: Service
+apiVersion: v1
+metadata:
+  name: $SERVICE
+spec:
+  ports:
+    - protocol: TCP
+      port: $PORT
+      name: http
+---
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: $SERVICE
+subsets:
+  - addresses:
+      - ip: $IP
+    ports:
+      - port: $PORT
+        name: http
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rawvm-ingress
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - http:
+      paths:
+      - path: $ROUTE
+        backend:
+          serviceName: $SERVICE
+          servicePort: $PORT
