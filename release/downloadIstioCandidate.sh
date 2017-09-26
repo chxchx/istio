@@ -7,12 +7,12 @@
 #
 # The script fetches the latest Istio release candidate and untars it.
 # It's a copy of ../downloadIstio.sh which is for stable releases but lets
-# users do curl -L https://git.io/getLatestIstio | ISTIO_VERSION=0.3.6 sh -
+# users do curl -L https://git.io/getLatestIstio | ISTIO_VERSION=${ISTIO_VERSION:-0.2.5}
 # for instance to change the version fetched.
 
 # This is the latest release candidate (matches ../istio.VERSION after basic
 # sanity checks)
-ISTIO_VERSION=${ISTIO_VERSION:-0.2.4}
+ISTIO_VERSION=${ISTIO_VERSION:${ISTIO_VERSION:-0.2.5}
 
 NAME="istio-$ISTIO_VERSION"
 OS="$(uname)"
