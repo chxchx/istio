@@ -54,7 +54,7 @@ function istioDnsmasq() {
     CA_IP=$(kubectl get -n $NS service istio-ca-ilb -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
     if [ "${PILOT_IP}" == "" -o  "${ISTIO_DNS}" == "" -o "${MIXER_IP}" == "" -o "${CA_IP}" == "" ] ; then
-      echo "Waiting for ILBs, pilot=$PILOT_IP, MIXER_IP=$MIXER_IP, CA_IP=$CA_IP, DNS=$ISTIO_DNS - kubectl get -n $NS service: $(kubectl get -n $NS service)"
+      echo "Waiting for ILBs, pilot=$PILOT_IP, MIXER_IP=$MIXER_IP, CA_IP=$CA_IP, DNS=$ISTIO_DNS"
       sleep 10
     else
       break

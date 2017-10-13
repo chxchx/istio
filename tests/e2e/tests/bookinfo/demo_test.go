@@ -466,6 +466,8 @@ func TestVMSetUp(t *testing.T) {
 		"Successfully set up http service on vm", t)
 	externalIP, err := vm.GetExternalIP()
 	inspect(err, "Failed to get external IP", "", t)
+	_, err = util.Shell("kubectl get services")
+	fmt.Printf("@@@@@@@@@@@@@@@@@@@@@@@@@@ %v\n", err)
 	_, err = util.Shell(fmt.Sprintf("curl -f http://%s:9411/zipkin/", externalIP))
 	inspect(err, "VM unable to reach the cluster", "VM successfully reaches the cluster", t)
 	e = vm.Teardown()

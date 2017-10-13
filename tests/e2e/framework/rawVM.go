@@ -87,14 +87,16 @@ func NewGCPRawVM(name, namespace string) *GCPRawVM {
 func (vm *GCPRawVM) GetInternalIP() (string, error) {
 	cmd := vm.baseCommand("describe") +
 		" --format='value(networkInterfaces[0].accessConfigs[0].natIP)'"
-	return u.Shell(cmd)
+	o, e := u.Shell(cmd)
+	return strings.Trim(o, "\n"), e
 }
 
 // GetExternalIP returns the internal IP of the VM
 func (vm *GCPRawVM) GetExternalIP() (string, error) {
 	cmd := vm.baseCommand("describe") +
 		" --format='value(networkInterfaces[0].networkIP)'"
-	return u.Shell(cmd)
+	o, e := u.Shell(cmd)
+	return strings.Trim(o, "\n"), e
 }
 
 // SecureShell execeutes cmd on vm through ssh
