@@ -152,10 +152,11 @@ func (vm *GCPRawVM) ConfigHTTPService(serviceName, port string) error {
 		return err
 	}
 	kv := map[string]string{
-		"$SERVICE": serviceName,
-		"$IP":      internalIP,
-		"$PORT":    port,
-		"$ROUTE":   fmt.Sprintf("/%s/", vm.Name),
+		"$SERVICE":     serviceName,
+		"$IP":          internalIP,
+		"$PORT":        port,
+		"$ROUTE":       fmt.Sprintf("/%s/", vm.Name),
+		"istio-system": vm.Namespace,
 	}
 	return replaceKVInYamlThenKubectlApply(mashExpansionYaml, kv)
 }
@@ -202,11 +203,11 @@ func (vm *GCPRawVM) baseCommand(action string) string {
 func (vm *GCPRawVM) setupMeshEx(op string, args ...string) error {
 	argsStr := strings.Join(args, " ")
 	env := fmt.Sprintf(`
-		export ISTIO_NAMESPACE=%s;
-		export K8S_GCP_OPTS="--zone %s";
-		export VM_GCP_OPTS="--zone %s";
-		export SERVICE_NAMESPACE=%s;
-		export SETUP_ISTIO_VM_SCRIPT=%s`,
+		export ISTIO_NAMESPACE=%s; 
+		export K8S_GCP_OPTS="--zone %s"; 
+		export VM_GCP_OPTS="--zone %s"; 
+		export SERVICE_NAMESPACE=%s; 
+		export SETUP_ISTIO_VM_SCRIPT=%s; `,
 		vm.Namespace, vm.ClusterZone, vm.Zone, vm.Namespace, setupIstioVMScript)
 	cmd := fmt.Sprintf("%s %s %s", setupMeshExScript, op, argsStr)
 	_, err := u.Shell(env + cmd)
