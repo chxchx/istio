@@ -15,6 +15,8 @@ ARG     K8S_VER=v1.9.2
 ARG     ETCD_VER=v3.2.15
 ARG     MINIKUBE_VER=v0.25.0
 ARG     HELM_VER=v2.7.2
+ARG     GSUTIL_VER=4.3
+ARG     OAUTH_VER=1.5.2
 
 # The local test cluster config
 ARG     MASTER_IP=127.0.0.1
@@ -66,3 +68,7 @@ RUN cd /tmp && \
     sudo mv linux-amd64/helm /usr/local/bin && \
     rm -rf helm.tgz linux-amd64
 
+# Install gsutil
+RUN sudo apt-get install gcc python-dev python-setuptools libffi-dev python-pip && \
+sudo pip install gsutil==${GSUTIL_VER} oauth2client==${OAUTH_VER} --force-reinstall && \
+sudo pip install --upgrade pyasn1-modules

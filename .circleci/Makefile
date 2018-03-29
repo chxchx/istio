@@ -1,5 +1,5 @@
 # Builder version
-CI_VERSION ?= go1.10-k8s1.9-helm2.7.2-minikube0.25
+CI_VERSION ?= go1.10-k8s1.9-helm2.7.2-minikube0.25-gsutil
 CI_HUB ?= istio
 
 ci.image:
@@ -16,5 +16,7 @@ ci.run:
 		--entrypoint /bin/bash \
         ${CI_HUB}/ci:$(CI_VERSION)
 
+ci.run-as-circleci:
+	docker run -it --entrypoint /bin/bash --privileged ${CI_HUB}/ci:$(CI_VERSION)
 
-.PHONY: ci.image ci.push ci.run
+.PHONY: ci.image ci.push ci.run ci.run-as-circleci

@@ -64,7 +64,7 @@ jobs:
             kubectl get all -o wide --all-namespaces
             kubectl cluster-info dump > /go/out/logs/cluster-info.dump.txt
             kubectl describe pods -n istio-system > /go/out/logs/pods-system.txt
-            /go/bin/go-junit-report </go/out/tests/test-report-noauth-simple.raw > /go/out/tests/test-report-noauth-simple.xml
+            /go/bin/go-junit-report </go/out/tests/test-report-noauth-simple.raw > /go/out/tests/junit_test-report-noauth-simple.xml
       - store_artifacts:
           path: /home/circleci/logs
       - store_artifacts:
